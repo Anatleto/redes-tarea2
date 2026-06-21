@@ -16,7 +16,7 @@
     </header>
 
     <div class="card">
-        <div class="card-title">📂 Base de Datos (Archivo .json)</div>
+        <div class="card-title">📂 Base de Datos </div>
         <p style="font-size: 10pt; color: #64748b; margin-bottom: 15px;">
             Sube un archivo JSON existente para restaurar tu historial, o añade datos directamente y descárgalos al terminar para guardarlos como tu base de datos.
         </p>
@@ -31,9 +31,13 @@
     <div class="card">
         <div class="card-title">⚡ Entrada de Datos en Tiempo Real</div>
         <div class="form-inline">
-            <div class="form-cell" style="width: 70%;">
-                <label for="sensorValue">Nueva Lectura del Sensor:</label>
-                <input type="number" id="sensorValue" placeholder="Ejemplo: 24.85" step="any">
+            <div class="form-cell" style="width: 35%;">
+                <label for="tempValue">🌡️ Temperatura (°C):</label>
+                <input type="number" id="tempValue" placeholder="Ej: 24.5" step="any">
+            </div>
+            <div class="form-cell" style="width: 35%;">
+                <label for="humValue">💧 Humedad (%):</label>
+                <input type="number" id="humValue" placeholder="Ej: 60" step="any">
             </div>
             <div class="form-cell" style="width: 30%;">
                 <label>&nbsp;</label>
@@ -42,29 +46,98 @@
         </div>
         
         <div class="actions-group">
-            <button class="btn btn-secondary" onclick="limpiarTodo()">Limpiar Gráfico</button>
-            <button class="btn btn-success" onclick="guardarYDescargarJSON()">💾 Guardar/Descargar JSON</button>
+            <button class="btn btn-secondary" onclick="limpiarTodo()">Limpiar Gráficos</button>
+            <button class="btn btn-success" onclick="guardarYDescargarJSON()">💾 Guardar/Descargar</button>
         </div>
     </div>
 
     <div class="card">
-        <div class="card-title">📈 Visualización de Variables</div>
+        <div class="card-title">🌡️ Historial de Temperatura</div>
         <div class="canvas-container">
-            <canvas id="sensorChart"></canvas>
+            <canvas id="tempChart"></canvas>
         </div>
         
         <div class="stats">
             <div class="stat-box">
-                <div class="stat-val" id="stat-max">--</div>
+                <div class="stat-val" id="temp-max">--</div>
                 <div class="stat-lbl">Máximo</div>
             </div>
             <div class="stat-box">
-                <div class="stat-val" id="stat-min">--</div>
+                <div class="stat-val" id="temp-min">--</div>
                 <div class="stat-lbl">Mínimo</div>
             </div>
             <div class="stat-box">
-                <div class="stat-val" id="stat-prom">--</div>
+                <div class="stat-val" id="temp-prom">--</div>
                 <div class="stat-lbl">Promedio</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">💧 Historial de Humedad</div>
+        <div class="canvas-container">
+            <canvas id="humChart"></canvas>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-val" id="hum-max">--</div>
+                <div class="stat-lbl">Máximo</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-val" id="hum-min">--</div>
+                <div class="stat-lbl">Mínimo</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-val" id="hum-prom">--</div>
+                <div class="stat-lbl">Promedio</div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title">📈 Visualización de Variables</div>
+        
+        <div style="margin-top: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;">
+            <h3 style="margin-bottom: 10px; color: #334155;">🌡️ Historial de Temperatura</h3>
+            <div class="canvas-container" style="position: relative; height: 220px; width: 100%;">
+                <canvas id="tempChart"></canvas>
+            </div>
+            
+            <div class="stats" style="margin-top: 15px;">
+                <div class="stat-box">
+                    <div class="stat-val" id="temp-max">--</div>
+                    <div class="stat-lbl">Máximo</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-val" id="temp-min">--</div>
+                    <div class="stat-lbl">Mínimo</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-val" id="temp-prom">--</div>
+                    <div class="stat-lbl">Promedio</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 25px;">
+            <h3 style="margin-bottom: 10px; color: #334155;">💧 Historial de Humedad</h3>
+            <div class="canvas-container" style="position: relative; height: 220px; width: 100%;">
+                <canvas id="humChart"></canvas>
+            </div>
+            
+            <div class="stats" style="margin-top: 15px;">
+                <div class="stat-box">
+                    <div class="stat-val" id="hum-max">--</div>
+                    <div class="stat-lbl">Máximo</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-val" id="hum-min">--</div>
+                    <div class="stat-lbl">Mínimo</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-val" id="hum-prom">--</div>
+                    <div class="stat-lbl">Promedio</div>
+                </div>
             </div>
         </div>
     </div>
