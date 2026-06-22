@@ -1,8 +1,8 @@
 #include <WiFi.h>
 #include <WebSocketsServer.h>
 
-const char* ssid     = NULL;
-const char* password = NULL;
+const char* ssid     = "Ramon-01";
+const char* password = "Akira165";
 
 WebSocketsServer webSocket = WebSocketsServer(81);
 
@@ -16,15 +16,25 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         }
         case WStype_TEXT:
             if(strcmp((char*)payload, "GET_DATA") == 0) {
-                String data = "{\"sensor_id\":1,\"value\":" + obtener_datos() + "}";
-                webSocket.sendTXT(num, data);
+                enviar_datos_json();
             }
             break;
     }
 }
 
-String obtener_datos() {
-    return String(random(100, 200));
+String obtener_humedad() {
+    return String(random(60, 85));
+}
+
+String obtener_temperatura() {
+    return String(random(5, 20));
+}
+
+void enviar_datos_json(){
+    String temp = obtener_temperatura();
+    String hum = obtener_humedad();
+    String jsonString = "{\"temperatura\":\"" + temp + "\",\"humedad\":\"" + hum + "\"}";
+    webSocket.broadcastTXT(jsonString);
 }
 
 void setup() {
@@ -43,11 +53,4 @@ void setup() {
 
 void loop() {
     webSocket.loop();
-    
-    static unsigned long lastMsg = 0;
-    if(millis() - lastMsg > 2000) {
-        lastMsg = millis();
-        String broadCastData = "{\"telemetry\":" + String(random(100, 200)) + "}";
-        webSocket.broadcastTXT(broadCastData);
-    }
 } 

@@ -159,19 +159,21 @@ function cargarJSON(event) {
 
 // 6. CONEXIÓN ESP32 (WEBSOCKETS)
 // Pon la IP real de tu ESP32 aquí
-const socketUrl = 'ws://192.168.1.100:81'; 
+const socketUrl = ''; 
 try {
     const socket = new WebSocket(socketUrl);
-    socket.onopen = () => { console.log("ESP32 Conectado"); socket.send("GET_DATA"); };
+    socket.onopen = () => { console.log("ESP32 Conectado"); 
+                            socket.send("GET_DATA"); 
+                        };
     socket.onmessage = (event) => {
-        const dataJson = JSON.parse(event.data);
-        const ahora = new Date();
-        if (dataJson.temperatura !== undefined && dataJson.humedad !== undefined) {
-            database.records.push({
-                timestamp: ahora.toLocaleDateString() + ' ' + ahora.toLocaleTimeString(),
-                temperatura: parseFloat(dataJson.temperatura),
-                humedad: parseFloat(dataJson.humedad)
-            });
+                                    const dataJson = JSON.parse(event.data);
+                                    const ahora = new Date();
+                                    if (dataJson.temperatura !== undefined && dataJson.humedad !== undefined) {
+                                        database.records.push({
+                                            timestamp: ahora.toLocaleDateString() + ' ' + ahora.toLocaleTimeString(),
+                                            temperatura: parseFloat(dataJson.temperatura),
+                                            humedad: parseFloat(dataJson.humedad)
+                                            });
             actualizarInterfaz();
         }
     };
