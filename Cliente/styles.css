@@ -16,22 +16,6 @@ body {
     margin: 0 auto;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-header h1 {
-    color: #1e293b;
-    font-size: 24pt;
-    margin-bottom: 8px;
-}
-
-header p {
-    color: #64748b;
-    font-size: 11pt;
-}
-
 .card {
     background: white;
     border-radius: 12px;
@@ -66,29 +50,6 @@ header p {
     padding-right: 0;
     width: 1%;
     white-space: nowrap;
-}
-
-label {
-    display: block;
-    font-size: 9.5pt;
-    font-weight: 600;
-    color: #475569;
-    margin-bottom: 5px;
-}
-
-input[type="number"], input[type="file"] {
-    width: 100%;
-    padding: 10px;
-    font-size: 11pt;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    background-color: #f8fafc;
-}
-
-input:focus {
-    border-color: #3b82f6;
-    background-color: #fff;
-    outline: none;
 }
 
 .btn {
@@ -128,7 +89,7 @@ input:focus {
     margin-top: 15px;
     padding-top: 15px;
     border-top: 1px dashed #e2e8f0;
-    text-align: right;
+    text-align: center;
 }
 
 .actions-group .btn {

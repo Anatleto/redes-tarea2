@@ -1,10 +1,9 @@
-// 1. ESTRUCTURA DE LA BASE DE DATOS
+// Para guardar datos
 let database = {
-    sensor_name: "Sensor_Local_01",
+    sensor_name: "temperatura_y_humedad",
     records: []
 };
- 
-// 2. INICIALIZACIÓN DE GRÁFICOS (CHART.JS)
+
 const ctxTemp = document.getElementById('tempChart').getContext('2d');
 const tempChart = new Chart(ctxTemp, {
     type: 'line',
@@ -36,39 +35,8 @@ const humChart = new Chart(ctxHum, {
     },
     options: { responsive: true, maintainAspectRatio: false }
 });
- 
-// 3. FUNCIÓN PARA AGREGAR DATOS (Botón "Registrar Dato")
-function agregarDato() {
-    const inputTemp = document.getElementById('tempValue');
-    const inputHum = document.getElementById('humValue');
-    
-    const valorTemp = parseFloat(inputTemp.value);
-    const valorHum = parseFloat(inputHum.value);
- 
-    if (isNaN(valorTemp) || isNaN(valorHum)) {
-        alert("Por favor, ingresa números válidos en ambos campos.");
-        return;
-    }
- 
-    const ahora = new Date();
-    const timestamp = ahora.toLocaleDateString() + ' ' + ahora.toLocaleTimeString();
- 
-    // Guardar en la base de datos
-    database.records.push({
-        timestamp: timestamp,
-        temperatura: valorTemp,
-        humedad: valorHum
-    });
- 
-    actualizarInterfaz();
-    
-    // Limpiar inputs
-    inputTemp.value = '';
-    inputHum.value = '';
-    inputTemp.focus();
-}
- 
-// 4. ACTUALIZAR GRÁFICOS Y ESTADÍSTICAS
+
+// Graficos y estadisticas
 function actualizarInterfaz() {
     // Vaciar datos actuales de los gráficos
     tempChart.data.labels = [];
@@ -92,19 +60,19 @@ function actualizarInterfaz() {
             arrayHum.push(registro.humedad);
         }
     });
- 
+
     tempChart.update();
     humChart.update();
- 
-    // Matemáticas de Temperatura
+
+    // Calculo de Temperatura
     if (arrayTemp.length > 0) {
         const sumT = arrayTemp.reduce((a, b) => a + b, 0);
         document.getElementById('temp-max').innerText = Math.max(...arrayTemp).toFixed(2);
         document.getElementById('temp-min').innerText = Math.min(...arrayTemp).toFixed(2);
         document.getElementById('temp-prom').innerText = (sumT / arrayTemp.length).toFixed(2);
     }
- 
-    // Matemáticas de Humedad
+
+    // Calculo de Humedad
     if (arrayHum.length > 0) {
         const sumH = arrayHum.reduce((a, b) => a + b, 0);
         document.getElementById('hum-max').innerText = Math.max(...arrayHum).toFixed(2);
@@ -112,8 +80,7 @@ function actualizarInterfaz() {
         document.getElementById('hum-prom').innerText = (sumH / arrayHum.length).toFixed(2);
     }
 }
- 
-// 5. FUNCIONES DE LIMPIEZA Y DESCARGA JSON
+
 function limpiarTodo() {
     if (confirm("¿Estás seguro de que deseas vaciar la base de datos actual?")) {
         database.records = [];
@@ -126,45 +93,12 @@ function limpiarTodo() {
         actualizarInterfaz();
     }
 }
- 
-function guardarYDescargarJSON() {
-    if (database.records.length === 0) {
-        alert("No hay registros para guardar.");
-        return;
-    }
-    const jsonString = JSON.stringify(database, null, 4);
-    const blob = new Blob([jsonString], { type: "application/json" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `bd_sensor_${new Date().toISOString().slice(0,10)}.json`;
-    link.click();
-}
- 
-function cargarJSON(event) {
-    const archivo = event.target.files[0];
-    if (!archivo) return;
-    const lector = new FileReader();
-    lector.onload = function(e) {
-        try {
-            const jsonParseado = JSON.parse(e.target.result);
-            if (jsonParseado && Array.isArray(jsonParseado.records)) {
-                database = jsonParseado;
-                actualizarInterfaz();
-                alert(`Base cargada. ${database.records.length} registros.`);
-            }
-        } catch (err) { alert("Error al leer el archivo JSON."); }
-    };
-    lector.readAsText(archivo);
-}
- 
-// 6. CONEXIÓN ESP32 (WEBSOCKETS)
-// Pon la IP real de tu ESP32 aquí
-const socketUrl = 'ws://201.239.52.240:82/';
- 
-// La variable "socket" se declara FUERA del try para poder usarla
-// también dentro de la función actualizarDatos() del botón.
+
+// Conexion ESP32 (WEBSOCKETS)
+const socketUrl = 'ws://201.239.52.240:82/'; // IP de la ESP32
+
 let socket = null;
- 
+
 function conectarSocket() {
     try {
         socket = new WebSocket(socketUrl);
@@ -199,20 +133,15 @@ function conectarSocket() {
         console.log("WebSocket no iniciado aún.", e);
     }
 }
- 
-// 7. FUNCIÓN DEL BOTÓN "ACTUALIZAR DATOS"
+
 function actualizarDatos() {
-    // readyState === 1 significa que el socket está abierto y listo para enviar
     if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send("GET_DATA");
         console.log("Solicitando datos nuevos al ESP32...");
     } else {
-        // Si la conexión se cayó o nunca se abrió, se intenta reconectar
         console.log("Socket no conectado. Reintentando conexión...");
         conectarSocket();
     }
 }
- 
-// Iniciar la conexión apenas carga la página
+
 conectarSocket();
- 
