@@ -16,7 +16,6 @@
 
         <div class="actions-group">
             <button class="btn btn-secondary" onclick="limpiarTodo()">Limpiar Gráficos</button>
-            <button class="btn btn-success" onclick="guardarYDescargarJSON()">Guardar/Descargar</button>
             <button class="btn" onclick="actualizarDatos()">Actualizar datos</button>
         </div>
     </div>
@@ -61,53 +60,6 @@
             <div class="stat-box">
                 <div class="stat-val" id="hum-prom">--</div>
                 <div class="stat-lbl">Promedio</div>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-title">Visualización de Variables</div>
-
-        <div style="margin-top: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;">
-            <h3 style="margin-bottom: 10px; color: #334155;">Historial de Temperatura</h3>
-            <div class="canvas-container" style="position: relative; height: 220px; width: 100%;">
-                <canvas id="tempChart"></canvas>
-            </div>
-
-            <div class="stats" style="margin-top: 15px;">
-                <div class="stat-box">
-                    <div class="stat-val" id="temp-max">--</div>
-                    <div class="stat-lbl">Máximo</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-val" id="temp-min">--</div>
-                    <div class="stat-lbl">Mínimo</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-val" id="temp-prom">--</div>
-                    <div class="stat-lbl">Promedio</div>
-                </div>
-            </div>
-        </div>
-
-        <div style="margin-top: 25px;">
-            <h3 style="margin-bottom: 10px; color: #334155;">Historial de Humedad</h3>
-            <div class="canvas-container" style="position: relative; height: 220px; width: 100%;">
-                <canvas id="humChart"></canvas>
-            </div>
-
-            <div class="stats" style="margin-top: 15px;">
-                <div class="stat-box">
-                    <div class="stat-val" id="hum-max">--</div>
-                    <div class="stat-lbl">Máximo</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-val" id="hum-min">--</div>
-                    <div class="stat-lbl">Mínimo</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-val" id="hum-prom">--</div>
-                    <div class="stat-lbl">Promedio</div>
-                </div>
             </div>
         </div>
     </div>

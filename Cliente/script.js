@@ -4,6 +4,7 @@ let database = {
     records: []
 };
 
+const max_puntos_grafica = 50;
 const ctxTemp = document.getElementById('tempChart').getContext('2d');
 const tempChart = new Chart(ctxTemp, {
     type: 'line',
@@ -37,66 +38,63 @@ const humChart = new Chart(ctxHum, {
 });
 
 // Graficos y estadisticas
-function actualizarInterfaz() {
-    // Vaciar datos actuales de los gráficos
-    tempChart.data.labels = [];
-    tempChart.data.datasets[0].data = [];
-    humChart.data.labels = [];
-    humChart.data.datasets[0].data = [];
- 
-    let arrayTemp = [];
-    let arrayHum = [];
- 
-    // Recorrer la base de datos y llenar los gráficos
-    database.records.forEach(registro => {
-        if (registro.temperatura !== undefined) {
-            tempChart.data.labels.push(registro.timestamp);
-            tempChart.data.datasets[0].data.push(registro.temperatura);
-            arrayTemp.push(registro.temperatura);
-        }
-        if (registro.humedad !== undefined) {
-            humChart.data.labels.push(registro.timestamp);
-            humChart.data.datasets[0].data.push(registro.humedad);
-            arrayHum.push(registro.humedad);
-        }
-    });
+function agregarPunto(timestamp, temperatura, humedad) {
+    
+    tempChart.data.labels.push(timestamp);
+    tempChart.data.datasets[0].data.push(temperatura);
 
-    tempChart.update();
-    humChart.update();
+    humChart.data.labels.push(timestamp);
+    humChart.data.datasets[0].data.push(humedad);
 
-    // Calculo de Temperatura
-    if (arrayTemp.length > 0) {
-        const sumT = arrayTemp.reduce((a, b) => a + b, 0);
-        document.getElementById('temp-max').innerText = Math.max(...arrayTemp).toFixed(2);
-        document.getElementById('temp-min').innerText = Math.min(...arrayTemp).toFixed(2);
-        document.getElementById('temp-prom').innerText = (sumT / arrayTemp.length).toFixed(2);
+    if (tempChart.data.labels.length > max_puntos_grafica) {
+        tempChart.data.labels.shift();
+        tempChart.data.datasets[0].data.shift();
+        humChart.data.datasets[0].data.shift();
     }
 
-    // Calculo de Humedad
+    tempChart.update('none');
+    humChart.update('none');
+}
+
+function actualizarStats() {
+    if (database.records.length === 0) return;
+
+    const arrayTemp = database.records.map(r => r.temperatura).filter(v => v!== undefined);
+    const arrayHum = database.records.map(r => r.humedad).filter(v => v !== undefined);
+
+    if (arrayTemp.length > 0) {
+        const sumTemp = arrayTemp.reduce((a, b) => a + b , 0);
+        document.getElementById('temp-max').innerText = Math.max(...arrayTemp).toFixed(2);
+        document.getElementById('temp-min').innerText = Math.min(...arrayTemp).toFixed(2);
+        document.getElementById('temp-prom').innerText = (sumTemp / arrayTemp.length).toFixed(2);
+    }
+
     if (arrayHum.length > 0) {
-        const sumH = arrayHum.reduce((a, b) => a + b, 0);
+        const sumHum = arrayHum.reduce((a, b) => a + b , 0);
         document.getElementById('hum-max').innerText = Math.max(...arrayHum).toFixed(2);
         document.getElementById('hum-min').innerText = Math.min(...arrayHum).toFixed(2);
-        document.getElementById('hum-prom').innerText = (sumH / arrayHum.length).toFixed(2);
+        document.getElementById('hum-prom').innerText = (sumHum / arrayHum.length).toFixed(2);
     }
 }
 
 function limpiarTodo() {
     if (confirm("¿Estás seguro de que deseas vaciar la base de datos actual?")) {
         database.records = [];
-        document.getElementById('temp-max').innerText = "--";
-        document.getElementById('temp-min').innerText = "--";
-        document.getElementById('temp-prom').innerText = "--";
-        document.getElementById('hum-max').innerText = "--";
-        document.getElementById('hum-min').innerText = "--";
-        document.getElementById('hum-prom').innerText = "--";
-        actualizarInterfaz();
+        
+        tempChart.data.labels = [];
+        tempChart.data.datasets[0].data = [];
+        humChart.data.labels = [];
+        humChart.data.datasets[0].data = [];
+        tempChart.update();
+        humChart.update();
+
+        const indicadores = ['temp-max', 'temp-min', 'temp-prom', 'hum-max', 'hum-min', 'hum-prom'];
+        indicadores.forEach(id => document.getElementById(id).innerText = "--");
     }
 }
 
 // Conexion ESP32 (WEBSOCKETS)
 const socketUrl = 'ws://201.239.52.240:82/'; // IP de la ESP32
-
 let socket = null;
 
 function conectarSocket() {
@@ -105,20 +103,30 @@ function conectarSocket() {
  
         socket.onopen = () => {
             console.log("ESP32 Conectado");
-            socket.send("GET_DATA");
+            actualizarDatos();
         };
  
         socket.onmessage = (event) => {
-            const dataJson = JSON.parse(event.data);
-            const ahora = new Date();
-            if (dataJson.temperatura !== undefined && dataJson.humedad !== undefined) {
-                database.records.push({
-                    timestamp: ahora.toLocaleDateString() + ' ' + ahora.toLocaleTimeString(),
-                    temperatura: parseFloat(dataJson.temperatura),
-                    humedad: parseFloat(dataJson.humedad)
-                });
-                actualizarInterfaz();
-            }
+            try {
+                const dataJson = JSON.parse(event.data);
+                const ahora = new Date();
+                const timestamp = ahora.toLocaleDateString() + ' ' + ahora.toLocaleDateString();
+
+                if (dataJson.temperatura !== undefined && dataJson.humedad !== undefined) {
+                    const temp = parseFloat(dataJson.temperatura);
+                    const hum = parseFloat(dataJson.humedad);
+
+                    database.records.push({
+                        timestamp: timestamp,
+                        temperatura: temp,
+                        humedad: hum
+                        });
+                    agregarPunto(timestamp, temp, hum);
+                    actualizarStats();
+                    }
+                } catch(jsonErr) {
+                    console.error("Error de parse del JSON recibido: ", jsonErr);
+                }
         };
  
         socket.onerror = (err) => {
@@ -137,11 +145,13 @@ function conectarSocket() {
 function actualizarDatos() {
     if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send("GET_DATA");
-        console.log("Solicitando datos nuevos al ESP32...");
+        console.log("Solicitando datos nuevos al ESP32.");
     } else {
-        console.log("Socket no conectado. Reintentando conexión...");
+        console.log("Socket no conectado. Reintentando conexion.");
         conectarSocket();
     }
 }
 
 conectarSocket();
+
+setInterval(actualizarDatos, 30000);
