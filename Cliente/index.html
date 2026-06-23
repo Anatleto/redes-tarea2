@@ -12,11 +12,11 @@
 <div class="container">
     <header>
         <h1>Sensor</h1>
-        <p>Carga, registra y descarga el historial de tu sensor de forma local</p>
+        <p>Carga, regista y descarga el historial de tu sensor de forma local</p>
     </header>
 
     <div class="card">
-        <div class="card-title">📂 Base de Datos </div>
+        <div class="card-title">Base de Datos </div>
         <p style="font-size: 10pt; color: #64748b; margin-bottom: 15px;">
             Sube un archivo JSON existente para restaurar tu historial, o añade datos directamente y descárgalos al terminar para guardarlos como tu base de datos.
         </p>
@@ -29,14 +29,14 @@
     </div>
 
     <div class="card">
-        <div class="card-title">⚡ Entrada de Datos en Tiempo Real</div>
+        <div class="card-title">Entrada de Datos en Tiempo Real</div>
         <div class="form-inline">
             <div class="form-cell" style="width: 35%;">
-                <label for="tempValue">🌡️ Temperatura (°C):</label>
+                <label for="tempValue">Temperatura (°C):</label>
                 <input type="number" id="tempValue" placeholder="Ej: 24.5" step="any">
             </div>
             <div class="form-cell" style="width: 35%;">
-                <label for="humValue">💧 Humedad (%):</label>
+                <label for="humValue">Humedad (%):</label>
                 <input type="number" id="humValue" placeholder="Ej: 60" step="any">
             </div>
             <div class="form-cell" style="width: 30%;">
@@ -47,7 +47,8 @@
         
         <div class="actions-group">
             <button class="btn btn-secondary" onclick="limpiarTodo()">Limpiar Gráficos</button>
-            <button class="btn btn-success" onclick="guardarYDescargarJSON()">💾 Guardar/Descargar</button>
+            <button class="btn btn-success" onclick="guardarYDescargarJSON()">Guardar/Descargar</button>
+            <button class="btn" onclick="actualizarDatos()">Actualizar datos</button>
         </div>
     </div>
 
@@ -95,10 +96,10 @@
         </div>
     </div>
     <div class="card">
-        <div class="card-title">📈 Visualización de Variables</div>
+        <div class="card-title">Visualización de Variables</div>
         
         <div style="margin-top: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;">
-            <h3 style="margin-bottom: 10px; color: #334155;">🌡️ Historial de Temperatura</h3>
+            <h3 style="margin-bottom: 10px; color: #334155;">Historial de Temperatura</h3>
             <div class="canvas-container" style="position: relative; height: 220px; width: 100%;">
                 <canvas id="tempChart"></canvas>
             </div>
@@ -120,7 +121,7 @@
         </div>
 
         <div style="margin-top: 25px;">
-            <h3 style="margin-bottom: 10px; color: #334155;">💧 Historial de Humedad</h3>
+            <h3 style="margin-bottom: 10px; color: #334155;">Historial de Humedad</h3>
             <div class="canvas-container" style="position: relative; height: 220px; width: 100%;">
                 <canvas id="humChart"></canvas>
             </div>
